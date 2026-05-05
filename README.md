@@ -1,4 +1,4 @@
-# 🔍 Multimodal AI Visual Search Engine
+# AI Visual Search Engine (Content-Based Image Retrieval)
 
 ## 📌 Project Overview
 This project is an advanced **Content-Based Visual Recommendation System**. Instead of relying on traditional text tags or user click-history, this system leverages **Computer Vision** to "read" the visual features of a product (shape, pattern, color) and instantly recommends similar items. 
