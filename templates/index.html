@@ -3,56 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Visual Search</title>
+    <title>Multimodal AI Visual Search</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Efek pop-up saat kursor berada di atas gambar */
         .hover-card {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         .hover-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0,0,0,0.1) !important;
             cursor: pointer;
+        }
+        .ai-processing-box {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-left: 5px solid #0d6efd;
         }
     </style>
 </head>
 <body class="bg-light pb-5">
 
 <div class="container mt-5">
-    <h2 class="text-center mb-4 text-primary fw-bold">🔍 Multimodal AI Visual Search</h2>
+    <h2 class="text-center mb-1 text-primary fw-bold">🧠 Multimodal AI Search Engine</h2>
+    <p class="text-center text-muted mb-5">Content-Based Retrieval using ResNet50 (Vision) + TF-IDF (NLP)</p>
     
-    <!-- KONDISI 1: JIKA GAMBAR SUDAH DIKLIK (Tampilkan Rekomendasi) -->
+    <!-- JIKA GAMBAR SUDAH DIKLIK (HASIL PENCARIAN) -->
     {% if query_image %}
     <div class="card p-4 shadow-sm mb-5 bg-white rounded border-0">
-        <div class="text-center mb-4">
-            <a href="/" class="btn btn-outline-secondary px-4">&larr; Kembali ke Katalog Awal</a>
+        <div class="mb-4">
+            <a href="/" class="btn btn-sm btn-outline-secondary">&larr; Kembali ke Katalog Utama</a>
         </div>
         
-        <div class="row mb-5">
-            <div class="col-md-4 mx-auto text-center">
-                <h5 class="text-muted">Target Pencarian:</h5>
+        <div class="row mb-5 align-items-center">
+            <!-- Menampilkan Gambar Target -->
+            <div class="col-md-4 text-center">
                 <div class="card shadow-sm border-primary">
                     <img src="/images/{{ query_image.image_name }}" class="card-img-top p-3" alt="Target" style="height: 300px; object-fit: contain;">
-                    <div class="card-body bg-primary text-white">
-                        <p class="card-text fw-bold mb-1">{{ query_image.productDisplayName }}</p>
-                        <span class="badge bg-light text-dark">{{ query_image.articleType }}</span>
-                    </div>
+                </div>
+            </div>
+            
+            <!-- Panel Pamer Proses Multimodal AI -->
+            <div class="col-md-8">
+                <div class="p-4 rounded ai-processing-box shadow-sm">
+                    <h5 class="fw-bold mb-3">⚙️ AI Multimodal Fusion Active</h5>
+                    <p class="mb-2"><strong>Target ID:</strong> {{ query_image.id }}</p>
+                    <p class="mb-2"><strong>Product Title:</strong> {{ query_image.productDisplayName }}</p>
+                    
+                    <hr>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <span class="badge bg-primary me-2">👁️ Vision (70%)</span> 
+                            Mengekstrak bentuk, pola, & warna gambar menggunakan <strong>ResNet50</strong>.
+                        </li>
+                        <li class="mb-2">
+                            <span class="badge bg-success me-2">📝 Semantic (30%)</span> 
+                            Menganalisis konteks teks "<i>{{ query_image.articleType }}</i>" menggunakan <strong>TF-IDF</strong>.
+                        </li>
+                        <li>
+                            <span class="badge bg-dark me-2">🔀 Vector Search</span> 
+                            Menghitung jarak <i>Cosine Similarity</i> dari 2.548 dimensi secara real-time.
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
 
-        <h4 class="mb-3 border-bottom pb-2">✨ Produk Visual Serupa:</h4>
+        <h4 class="mb-3 border-bottom pb-2">✨ Hasil Rekomendasi Teratas:</h4>
         <div class="row row-cols-1 row-cols-md-5 g-4">
             {% for rec in recommendations %}
             <div class="col">
-                <!-- Link ini membuat rekomendasi bisa diklik lagi untuk pencarian berlapis -->
                 <a href="/?query={{ rec.original_index }}" class="text-decoration-none text-dark">
                     <div class="card shadow-sm h-100 hover-card border-0 bg-white">
                         <img src="/images/{{ rec.image_name }}" class="card-img-top p-2" alt="Recommendation" style="height: 200px; object-fit: contain;">
                         <div class="card-body text-center d-flex flex-column justify-content-between">
                             <p class="card-text small mb-2" style="height: 40px; overflow: hidden;">{{ rec.productDisplayName }}</p>
-                            <span class="badge bg-success py-2 w-100">Kemiripan: {{ rec.score }}%</span>
+                            <!-- Mengganti kata Mirip menjadi Multimodal Match agar lebih teknis -->
+                            <span class="badge bg-success py-2 w-100">Multimodal Match: {{ rec.score }}%</span>
                         </div>
                     </div>
                 </a>
@@ -61,16 +86,15 @@
         </div>
     </div>
     
-    <!-- KONDISI 2: TAMPILAN AWAL SEBELUM ADA YANG DIKLIK (Tampilkan Katalog) -->
+    <!-- TAMPILAN AWAL SEBELUM DIKLIK -->
     {% else %}
-    <div class="alert alert-primary text-center shadow-sm" role="alert">
-        Terdapat <strong>10 kategori produk</strong>. Silakan klik salah satu gambar di bawah ini untuk mencari item yang mirip!
+    <div class="alert alert-primary border-0 shadow-sm text-center" role="alert">
+        <strong>Pilih salah satu produk di bawah ini!</strong> AI akan mengekstrak ciri visual dan teks secara bersamaan untuk mencari kemiripannya.
     </div>
     
     <div class="row row-cols-1 row-cols-md-5 g-4 mt-2">
         {% for item in katalog %}
         <div class="col">
-            <!-- Link menuju ID gambar tersebut -->
             <a href="/?query={{ item.original_index }}" class="text-decoration-none text-dark">
                 <div class="card h-100 shadow-sm hover-card border-0">
                     <img src="/images/{{ item.image_name }}" class="card-img-top p-3" alt="..." style="height: 220px; object-fit: contain;">

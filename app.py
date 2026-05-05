@@ -6,7 +6,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 app = Flask(__name__)
 
 print("Memuat model dan dataset...")
-embeddings = np.load('image_embeddings_5k.npy')
+embeddings = np.load('multimodal_embeddings_5k.npy')
 df = pd.read_csv('filtered_metadata_5k.csv')
 
 # Sesuaikan path ini dengan letak folder gambar aslimu
