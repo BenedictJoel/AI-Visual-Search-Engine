@@ -1,0 +1,6 @@
+# Mengabaikan folder gambar dataset agar tidak ikut ter-upload
+images/
+
+# Mengabaikan file sistem Python
+__pycache__/
+.ipynb_checkpoints/

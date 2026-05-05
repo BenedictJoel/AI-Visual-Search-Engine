@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Visual Search</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Efek pop-up saat kursor berada di atas gambar */
+        .hover-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .hover-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-light pb-5">
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4 text-primary fw-bold">🔍 Multimodal AI Visual Search</h2>
+    
+    <!-- KONDISI 1: JIKA GAMBAR SUDAH DIKLIK (Tampilkan Rekomendasi) -->
+    {% if query_image %}
+    <div class="card p-4 shadow-sm mb-5 bg-white rounded border-0">
+        <div class="text-center mb-4">
+            <a href="/" class="btn btn-outline-secondary px-4">&larr; Kembali ke Katalog Awal</a>
+        </div>
+        
+        <div class="row mb-5">
+            <div class="col-md-4 mx-auto text-center">
+                <h5 class="text-muted">Target Pencarian:</h5>
+                <div class="card shadow-sm border-primary">
+                    <img src="/images/{{ query_image.image_name }}" class="card-img-top p-3" alt="Target" style="height: 300px; object-fit: contain;">
+                    <div class="card-body bg-primary text-white">
+                        <p class="card-text fw-bold mb-1">{{ query_image.productDisplayName }}</p>
+                        <span class="badge bg-light text-dark">{{ query_image.articleType }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="mb-3 border-bottom pb-2">✨ Produk Visual Serupa:</h4>
+        <div class="row row-cols-1 row-cols-md-5 g-4">
+            {% for rec in recommendations %}
+            <div class="col">
+                <!-- Link ini membuat rekomendasi bisa diklik lagi untuk pencarian berlapis -->
+                <a href="/?query={{ rec.original_index }}" class="text-decoration-none text-dark">
+                    <div class="card shadow-sm h-100 hover-card border-0 bg-white">
+                        <img src="/images/{{ rec.image_name }}" class="card-img-top p-2" alt="Recommendation" style="height: 200px; object-fit: contain;">
+                        <div class="card-body text-center d-flex flex-column justify-content-between">
+                            <p class="card-text small mb-2" style="height: 40px; overflow: hidden;">{{ rec.productDisplayName }}</p>
+                            <span class="badge bg-success py-2 w-100">Kemiripan: {{ rec.score }}%</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- KONDISI 2: TAMPILAN AWAL SEBELUM ADA YANG DIKLIK (Tampilkan Katalog) -->
+    {% else %}
+    <div class="alert alert-primary text-center shadow-sm" role="alert">
+        Terdapat <strong>10 kategori produk</strong>. Silakan klik salah satu gambar di bawah ini untuk mencari item yang mirip!
+    </div>
+    
+    <div class="row row-cols-1 row-cols-md-5 g-4 mt-2">
+        {% for item in katalog %}
+        <div class="col">
+            <!-- Link menuju ID gambar tersebut -->
+            <a href="/?query={{ item.original_index }}" class="text-decoration-none text-dark">
+                <div class="card h-100 shadow-sm hover-card border-0">
+                    <img src="/images/{{ item.image_name }}" class="card-img-top p-3" alt="..." style="height: 220px; object-fit: contain;">
+                    <div class="card-body text-center bg-white border-top">
+                        <span class="badge bg-dark mb-2 px-3">{{ item.articleType }}</span>
+                        <p class="card-text small mb-0" style="height: 40px; overflow: hidden;">{{ item.productDisplayName }}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
